@@ -1,0 +1,9 @@
+{
+  "name" : "qtmarkdowntest",
+  "version-string" : "1.0.0",
+  "builtin-baseline" : "d765306b074717dea8dc1c4723e1b025acb61c2d",
+  "dependencies" : [ {
+    "name" : "qtbase",
+    "version>=" : "6.5.2"
+  } ]
+}
