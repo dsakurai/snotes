@@ -20,7 +20,7 @@ FetchContent_MakeAvailable(qmarkdowntext_project)
 FetchContent_GetProperties(qmarkdowntext_project) # Expose paths as variables
 
 
-add_executable(simplemd
+add_executable(simplenotes
         main.cpp
         MainWindow.cpp
         MainWindow.h
@@ -29,23 +29,23 @@ add_executable(simplemd
         NotesListView.h
 )
 
-target_include_directories(simplemd
+target_include_directories(simplenotes
     PRIVATE
     "${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
-set_target_properties(simplemd PROPERTIES
+set_target_properties(simplenotes PROPERTIES
     AUTOMOC ON
     AUTORCC ON
     AUTOUIC ON
 )
 
-target_include_directories(simplemd
+target_include_directories(simplenotes
         PRIVATE
         "${qmarkdowntext_project_SOURCE_DIR}" # The header of the QWidget for markdown. The problem is that it's in the build directory...
 )
 
-target_link_libraries(simplemd
+target_link_libraries(simplenotes
         Qt::Core
         Qt::Gui
         Qt::Widgets
