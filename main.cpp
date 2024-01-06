@@ -1,6 +1,5 @@
 #include <QApplication>
 #include <QSortFilterProxyModel>
-#include <QAbstractItemModel>
 #include "MainWindow.h"
 #include "NotesListView.h"
 
