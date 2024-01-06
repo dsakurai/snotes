@@ -25,7 +25,7 @@ add_executable(simplenotes
         MainWindow.cpp
         MainWindow.h
         MainWindow.ui
-        ProjectFolderModel.h
+        NotesFolderModel.h
         NotesListView.h
 )
 

@@ -6,7 +6,7 @@
 #define SIMPLEMARKDOWN_NOTESLISTVIEW_H
 
 #include <QTreeView>
-#include "ProjectFolderModel.h"
+#include "NotesFolderModel.h"
 
 class NotesListView: public QTreeView {
     Q_OBJECT
@@ -15,7 +15,7 @@ public:
 
     using QTreeView::QTreeView;
 
-    void setProjectFolderModel(ProjectFolderModel *model) {
+    void setProjectFolderModel(NotesFolderModel *model) {
         QTreeView::setModel(dynamic_cast<QFileSystemModel*>(model));
         setRootIndex(model->index(model->rootPath()));
     }

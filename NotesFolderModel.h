@@ -2,17 +2,17 @@
 // Created by Daisuke Sakurai on 2024/01/05.
 //
 
-#ifndef SIMPLEMARKDOWN_PROJECTFOLDERMODEL_H
-#define SIMPLEMARKDOWN_PROJECTFOLDERMODEL_H
+#ifndef SIMPLEMARKDOWN_NOTESFOLDERMODEL_H
+#define SIMPLEMARKDOWN_NOTESFOLDERMODEL_H
 
 #include <QFileSystemModel>
 
-class ProjectFolderModel: public QFileSystemModel {
+class NotesFolderModel: public QFileSystemModel {
     Q_OBJECT
 
 public:
     explicit
-    ProjectFolderModel(QObject* parent = nullptr): QFileSystemModel(parent) {
+    NotesFolderModel(QObject* parent = nullptr): QFileSystemModel(parent) {
         setNameFilters(QStringList("*.md"));
         setNameFilterDisables(false);
         setFilter(QDir::Files);
@@ -22,4 +22,4 @@ public:
     using QFileSystemModel::index;
 };
 
-#endif //SIMPLEMARKDOWN_PROJECTFOLDERMODEL_H
+#endif //SIMPLEMARKDOWN_NOTESFOLDERMODEL_H

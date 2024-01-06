@@ -13,7 +13,7 @@ int main(int argc, char *argv[]) {
     qDebug() << QStandardPaths::writableLocation(QStandardPaths::DocumentsLocation);
 
 
-    auto* model = new ProjectFolderModel{};
+    auto* model = new NotesFolderModel{};
     
     QString path = "/Users/daisukesakurai/tmp/qtmarkdowntest/resources/test_markdown_directory";
     model->setRootPath(path);
