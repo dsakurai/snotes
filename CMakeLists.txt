@@ -19,7 +19,20 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(qmarkdowntext_project)
 FetchContent_GetProperties(qmarkdowntext_project) # Expose paths as variables
 
-add_executable(simplemd main.cpp)
+
+add_executable(simplemd
+        main.cpp
+        MainWindow.cpp
+        MainWindow.h
+        MainWindow.ui
+        ProjectFolderModel.h
+        NotesListView.h
+)
+
+target_include_directories(simplemd
+    PRIVATE
+    "${CMAKE_CURRENT_SOURCE_DIR}"
+)
 
 set_target_properties(simplemd PROPERTIES
     AUTOMOC ON
