@@ -59,6 +59,56 @@ void open_main_window() {
     mainWindow->show();
 }
 
+bool initialize_user_folder(const QVariant& path) {
+
+    if ( not path.isValid() ) { // i.e. is not null
+        show_warning_and_request_quit("Failed to get the path to the folder. Quitting app.");
+        return false;
+    }
+
+    QString path_string = path.toString();
+
+    if ( not QDir(path_string).exists()) {
+        const int success = QDir{}.mkpath(path_string);
+        if (not success) {
+            show_warning_and_request_quit("Failed to create folder. Quitting app.");
+            return false;
+        }
+    }
+
+    // Path exists
+
+    // Create notes
+    QDirIterator notes (":/vendor_defaults/notes");
+    while (notes.hasNext()) {
+
+        auto note_resource_path = notes.next();
+        QFile markdown (note_resource_path);
+
+        if (markdown.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QString name = QFileInfo(markdown.fileName()).fileName();
+
+            QFile write_to_file (QDir(path_string).filePath(name));
+
+            bool success = markdown.copy(QDir(path_string).filePath(name));
+
+            if (not success) {
+                show_warning_and_request_quit("Failed to create notes in the folder. Quitting the app.");
+                return false;
+            }
+        } else {
+            show_warning_and_request_quit("Failed to create notes in the folder. Quitting the app.");
+            return false;
+        }
+    }
+
+    // Save path
+    QSettings settings;
+    settings.setValue(Settings::Keys::UserDefaultsGroup::notes_folder, path_string);
+    
+    return true;
+}
+
 /**
  * Because the input `path` must not be destroyed before the dialog is shown,
  * this function should be called only from `main()` where `path` lives forever. 
@@ -73,81 +123,36 @@ void ensure_user_folder_and_request_main_window(QVariant& path) {
     if ( not path.isValid() ||
          not QDir(path.toString()).exists()) {
 
-        ChooseFolderDialog *dialog = Settings::get_user_default_folder();
+        ChooseFolderDialog *choose_folder_dialog = Settings::get_user_default_folder();
 
         // The default path
         path = vendor_defaults::notes_folder_qdir().path();
 
         // User can override the default
         QObject::connect(
-                dialog, &ChooseFolderDialog::folder_set,
+                choose_folder_dialog, &ChooseFolderDialog::folder_set,
                 [&path](const QString preferred_path) {
                     path = preferred_path;
                 }
         );
 
-        // Dialog is closed
+        // Initialize the user-default notes folder on dialog closing
         QObject::connect(
-                dialog, &ChooseFolderDialog::finished,
+                choose_folder_dialog, &ChooseFolderDialog::finished,
                 [&path](int result) {
-                    // OK button pushed
-                    if (result == QDialog::Accepted) {
-
-                        if ( not path.isValid() ) { // i.e. is not null
-                            show_warning_and_request_quit("Failed to get the path to the folder. Quitting app.");
-                            return;
-                        }
-
-                        QString path_string = path.toString();
-
-                        if ( not QDir(path_string).exists()) {
-                            const int success = QDir{}.mkpath(path_string);
-                            if (not success) {
-                                show_warning_and_request_quit("Failed to create folder. Quitting app.");
-                                return;
-                            }
-                        }
-
-                        // Path exists
-
-                        // Create notes
-                        QDirIterator notes (":/vendor_defaults/notes");
-                        while (notes.hasNext()) {
-
-                            auto note_resource_path = notes.next();
-                            QFile markdown (note_resource_path);
-
-                            if (markdown.open(QIODevice::ReadOnly | QIODevice::Text)) {
-                                QString name = QFileInfo(markdown.fileName()).fileName();
-
-                                QFile write_to_file (QDir(path_string).filePath(name));
-
-                                bool success = markdown.copy(QDir(path_string).filePath(name));
-
-                                if (not success) {
-                                    show_warning_and_request_quit("Failed to create notes in the folder. Quitting the app.");
-                                    return;
-                                }
-                            } else {
-                                show_warning_and_request_quit("Failed to create notes in the folder. Quitting the app.");
-                                return;
-                            }
-                        }
-
-                        // Save path
-                        QSettings settings;
-                        settings.setValue(Settings::Keys::UserDefaultsGroup::notes_folder, path_string);
-                        
+                    if (result == QDialog::Accepted) { // OK button pushed
+                        const int success = initialize_user_folder(path);
+                        if (not success) return; // app will be closed as requested in `initialize_user_folder`
                         open_main_window();
+
                     } else { // The user refused to set a project folder.
-                        QSettings settings;
-                        settings.remove(Settings::Keys::UserDefaultsGroup::notes_folder);
+                        QSettings{}.remove(Settings::Keys::UserDefaultsGroup::notes_folder);
                         QCoreApplication::quit();
                     }
                 }
         );
 
-        dialog->open();
+        choose_folder_dialog->open();
 
     } else {
         open_main_window();
