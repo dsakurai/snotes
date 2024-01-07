@@ -19,7 +19,7 @@
      <widget class="NotesListView" name="notesListView"/>
     </item>
     <item>
-     <widget class="QMarkdownTextEdit" name="markdownTextEdit"/>
+     <widget class="QMarkdownTextEdit" name="plainTextEdit"/>
     </item>
    </layout>
   </widget>

@@ -1,14 +1,12 @@
 cmake_minimum_required(VERSION 3.27)
-project(SimpleMarkdown)
-
-set(CMAKE_CXX_STANDARD 20)
+project(SimpleMarkdown LANGUAGES CXX)
 
 find_package(Qt6 COMPONENTS
         Core
         Gui
         Widgets
         REQUIRED)
-        
+
 include(FetchContent)
 
 FetchContent_Declare(
@@ -19,6 +17,9 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(qmarkdowntext_project)
 FetchContent_GetProperties(qmarkdowntext_project) # Expose paths as variables
 
+set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED yes)
+set(CMAKE_CXX_EXTENSIONS off)
 
 add_executable(simplenotes
         main.cpp
@@ -27,7 +28,14 @@ add_executable(simplenotes
         MainWindow.ui
         NotesFolderModel.h
         NotesListView.h
+        Defaults.h
+        
+        resources/resources.qrc
+        About_this_app.h
+        Settings.h
 )
+
+set_target_properties(simplenotes PROPERTIES CXX_SCAN_FOR_MODULES OFF)
 
 target_include_directories(simplenotes
     PRIVATE

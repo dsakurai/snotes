@@ -24,6 +24,12 @@ public:
     NotesListView* notesListView();
 
     ~MainWindow() override;
+    
+signals:
+    /**
+     * Quit is requested from within the constructor of this class.
+     */
+    void quit_from_constructor(); // NOLINT
 
 private:
     Ui::MainWindow *ui;
