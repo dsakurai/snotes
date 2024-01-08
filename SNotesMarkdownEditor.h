@@ -53,26 +53,26 @@ public slots:
     inline
     void save_file_immediately() {
     
-        // No path set.
-        if (!path) return;
-
-        // Original text in the file
-        QString original;
-        if (QFile file (*path); file.open(QIODevice::ReadOnly | QIODevice::Text))
+        is_save_requested = false;
+    
+        if (!path) return; // No path set.
+        
+        QString original; // Original text in the file
+        if (QFile file (*path); file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             original = file.readAll();
+        } else {
+            /* Display warning */ QMessageBox::critical(this, "Reading Fail", "Reading from the file failed. Check the file permissions.");
+            return;
+        }
 
         // The text in the editor
-        QString text = this->document()->toRawText();
-
-        // Don't overwrite if the texts match
-        if (text == original) return;
+        const QString text = this->document()->toRawText();
+        if (text == original) return; // no point writing the same text
         
         // Write the content to file
         if (QFile file (*path); file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate )) {
             file.write(text.toUtf8());
         } else /* Display warning */ QMessageBox::critical(this, "Writing Fail", "Writing to the file failed. Check the file permissions.");
-
-        is_save_requested = false;
     }
 
 protected slots:
