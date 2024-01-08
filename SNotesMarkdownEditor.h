@@ -62,6 +62,11 @@ public slots:
         QString original; // Original text in the file
         if (QFile file (*path); file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             original = file.readAll();
+        } else {
+            // If we can't read from the file, we don't know if the content in the editor matches with the actual file contents we failed to read.
+            // We therefore cancel the write and quit.
+            /* Display warning */ QMessageBox::critical(this, "Reading Fail", "Reading from the file failed. Check the file permissions.");
+            return;
         }
 
         // The text in the editor
