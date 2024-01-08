@@ -47,6 +47,8 @@ public slots:
                 file.open(QIODevice::ReadOnly | QIODevice::Text)) {
             QString text = file.readAll();
             setPlainText(text);
+        } else {
+            /* Display warning */ QMessageBox::critical(this, "Reading Fail", "Reading from the file failed. Check the file permissions.");
         }
     };
     
