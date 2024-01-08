@@ -7,6 +7,7 @@
 
 #include <qmarkdowntextedit.h>
 #include <QFile>
+#include <QMessageBox>
 
 class SNotesMarkdownEditor: public QMarkdownTextEdit {
     Q_OBJECT
@@ -55,13 +56,21 @@ public slots:
         // No path set.
         if (!path) return;
 
-        // save file
+        // Original text in the file
+        QString original;
+        if (QFile file (*path); file.open(QIODevice::ReadOnly | QIODevice::Text))
+            original = file.readAll();
 
-        if (QFile file (*path);
-                file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate)) {
-            QString text = this->document()->toRawText();
+        // The text in the editor
+        QString text = this->document()->toRawText();
+
+        // Don't overwrite if the texts match
+        if (text == original) return;
+        
+        // Write the content to file
+        if (QFile file (*path); file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate )) {
             file.write(text.toUtf8());
-        }
+        } else /* Display warning */ QMessageBox::critical(this, "Writing Fail", "Writing to the file failed. Check the file permissions.");
 
         is_save_requested = false;
     }
