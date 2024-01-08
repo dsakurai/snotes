@@ -114,34 +114,36 @@ bool initialize_user_folder(const QVariant& path) {
  * this function should be called only from `main()` where `path` lives forever. 
  * @param path 
  */
-void ensure_user_folder_and_request_main_window(QVariant& path) {
+void ensure_user_folder_and_request_main_window() {
 
     QSettings qsettings;
 
-    path = qsettings.value(Settings::Keys::UserDefaultsGroup::notes_folder);
+    // This will be passed to lambda functions.
+    // The shared_ptr is copied in order to avoid deletion before the lambdas are executed.
+    std::shared_ptr path = std::make_shared<QVariant >(qsettings.value(Settings::Keys::UserDefaultsGroup::notes_folder));
 
-    if ( not path.isValid() ||
-         not QDir(path.toString()).exists()) {
+    if ( not path->isValid() ||
+         not QDir(path->toString()).exists()) {
 
         ChooseFolderDialog *choose_folder_dialog = Settings::get_user_default_folder();
 
         // The default path
-        path = vendor_defaults::notes_folder_qdir().path();
+        *path = vendor_defaults::notes_folder_qdir().path();
 
         // User can override the default
         QObject::connect(
                 choose_folder_dialog, &ChooseFolderDialog::folder_set,
-                [&path](const QString preferred_path) {
-                    path = preferred_path;
+                [path=path](const QString preferred_path) {
+                    *path = preferred_path;
                 }
         );
 
         // Initialize the user-default notes folder on dialog closing
         QObject::connect(
                 choose_folder_dialog, &ChooseFolderDialog::finished,
-                [&path](int result) {
+                [path=path](int result) {
                     if (result == QDialog::Accepted) { // OK button pushed
-                        const int success = initialize_user_folder(path);
+                        const int success = initialize_user_folder(*path);
                         if (not success) return; // app will be closed as requested in `initialize_user_folder`
                         open_main_window();
 
@@ -165,15 +167,11 @@ int main(int argc, char *argv[]) {
     about_this_app::setOrganizationName("SNoteTeam");
     about_this_app::setApplicationName("SNote");
     
-    QVariant path;
-
     // Execute when event loop starts
     QTimer::singleShot(0,
                        // In case the folder does not exist, the main window opens only after this function returns.
                        // This is due to Qt's event loop mechanism 
-                       [&path]() {
-                           ensure_user_folder_and_request_main_window(path);
-                       }
+                       ensure_user_folder_and_request_main_window
     );
     
     return QApplication::exec();
