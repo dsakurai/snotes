@@ -16,8 +16,12 @@ public:
     using QTreeView::QTreeView;
 
     void setProjectFolderModel(NotesFolderModel *model) {
-        QTreeView::setModel(dynamic_cast<QFileSystemModel*>(model));
+        QTreeView::setModel(model);
         setRootIndex(model->index(model->rootPath()));
+
+        // TODO Check the column names instead of relying on these magic numbers
+        hideColumn(1); // file size column
+        hideColumn(2); // file type column
     }
     
     QFileSystemModel* model() { // NOLINT overriding a method that's actually not virtual
