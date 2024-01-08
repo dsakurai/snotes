@@ -90,9 +90,12 @@ bool initialize_user_folder(const QVariant& path) {
 
             QFile write_to_file (QDir(path_string).filePath(name));
 
-            bool success = markdown.copy(QDir(path_string).filePath(name));
+            // If the file already exists on the disk, leave it alone.
+            if (write_to_file.exists()) continue;
 
-            if (not success) {
+            if (write_to_file.open(QIODevice::ReadWrite | QIODevice::Text | QIODevice::Truncate)) {
+                write_to_file.write(markdown.readAll());
+            } else { // failed to open file for writing.
                 show_warning_and_request_quit("Failed to create notes in the folder. Quitting the app.");
                 return false;
             }

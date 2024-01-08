@@ -19,7 +19,7 @@
      <widget class="NotesListView" name="notesListView"/>
     </item>
     <item>
-     <widget class="QMarkdownTextEdit" name="plainTextEdit"/>
+     <widget class="SNotesMarkdownEditor" name="markdownEditor"/>
     </item>
    </layout>
   </widget>
@@ -37,9 +37,9 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>QMarkdownTextEdit</class>
+   <class>SNotesMarkdownEditor</class>
    <extends>QPlainTextEdit</extends>
-   <header>qmarkdowntextedit.h</header>
+   <header>SNotesMarkdownEditor.h</header>
   </customwidget>
   <customwidget>
    <class>NotesListView</class>

@@ -33,6 +33,8 @@ add_executable(simplenotes
         resources/resources.qrc
         About_this_app.h
         Settings.h
+        SNotesMarkdownEditor.cpp
+        SNotesMarkdownEditor.h
 )
 
 set_target_properties(simplenotes PROPERTIES CXX_SCAN_FOR_MODULES OFF)

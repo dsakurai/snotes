@@ -17,6 +17,10 @@ MainWindow::MainWindow(QWidget *parent) :
 //    if (error & Settings::Error::quit_requested_by_user) {
 //        emit quit_from_constructor();
 //    }
+    connect(
+            ui->notesListView, &NotesListView::singleFileSelected,
+            ui->markdownEditor, &SNotesMarkdownEditor::open_file
+    );
 }
 
 MainWindow::~MainWindow() {
