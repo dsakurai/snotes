@@ -56,7 +56,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     connect(
             ui->notesListView, &NotesListView::singleFileSelected,
-            ui->noteViewsArea, &NoteViewsArea::open_editor
+            ui->noteViewsArea, &NoteViewsArea::open_file
     );
 }
 

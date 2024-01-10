@@ -21,22 +21,14 @@ public:
     }
     
 public slots:
-    void open_editor(QString path) {
-    
-        auto create_new_editor = [this, path]() {
+    void open_file(const QString path) {
+
+        if(!markdownEditor){
             markdownEditor = new SNotesMarkdownEditor(this);
-            this->layout()->addWidget(markdownEditor);
-            markdownEditor->open_file(path);
-        };
-    
-        if(markdownEditor) { // an editor widget is already there
-            markdownEditor->deleteLater(); // delete the current one
-            connect(markdownEditor, &SNotesMarkdownEditor::destroyed, // on desrtruction
-                    this, create_new_editor // create a new editor
-            );
-        } else {
-            create_new_editor(); // create a new editor immediately
+            layout()->addWidget(markdownEditor);
         }
+        
+        markdownEditor->open_file(path);
     };
 
 private:
