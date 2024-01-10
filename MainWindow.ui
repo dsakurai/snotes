@@ -20,14 +20,21 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QGridLayout" name="gridLayout">
-    <item row="0" column="0">
+   <layout class="QHBoxLayout" name="horizontalLayout">
+    <item>
      <widget class="QSplitter" name="splitter">
       <property name="orientation">
        <enum>Qt::Horizontal</enum>
       </property>
       <widget class="NotesListView" name="notesListView"/>
-      <widget class="SNotesMarkdownEditor" name="markdownEditor"/>
+      <widget class="NoteViewsArea" name="noteViewsArea" native="true">
+       <property name="sizePolicy">
+        <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+         <horstretch>0</horstretch>
+         <verstretch>0</verstretch>
+        </sizepolicy>
+       </property>
+      </widget>
      </widget>
     </item>
    </layout>
@@ -46,14 +53,15 @@
  </widget>
  <customwidgets>
   <customwidget>
-   <class>SNotesMarkdownEditor</class>
-   <extends>QPlainTextEdit</extends>
-   <header>SNotesMarkdownEditor.h</header>
-  </customwidget>
-  <customwidget>
    <class>NotesListView</class>
    <extends>QTreeView</extends>
    <header>NotesListView.h</header>
+  </customwidget>
+  <customwidget>
+   <class>NoteViewsArea</class>
+   <extends>QWidget</extends>
+   <header>NoteViewsArea.h</header>
+   <container>1</container>
   </customwidget>
  </customwidgets>
  <resources/>

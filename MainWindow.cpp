@@ -5,6 +5,7 @@
 // You may need to build the project (run Qt uic code generator) to get "ui_MainWindow.h" resolved
 
 #include "MainWindow.h"
+#include "NoteViewsArea.h"
 #include "ui_MainWindow.h"
 #include "Settings.h"
 
@@ -18,10 +19,6 @@ MainWindow::MainWindow(QWidget *parent) :
 //    if (error & Settings::Error::quit_requested_by_user) {
 //        emit quit_from_constructor();
 //    }
-    connect(
-            ui->notesListView, &NotesListView::singleFileSelected,
-            ui->markdownEditor, &SNotesMarkdownEditor::open_file
-    );
 
     // Create a new note
     QShortcut *shortcut = new QShortcut(QKeySequence::New, this);
@@ -55,6 +52,11 @@ MainWindow::MainWindow(QWidget *parent) :
                 ui->notesListView->selectionModel()->select(index, QItemSelectionModel::Select | QItemSelectionModel::Rows);
                 ui->notesListView->scrollTo(index);
             }
+    );
+
+    connect(
+            ui->notesListView, &NotesListView::singleFileSelected,
+            ui->noteViewsArea, &NoteViewsArea::open_editor
     );
 }
 
