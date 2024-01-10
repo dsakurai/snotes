@@ -15,7 +15,20 @@ class SNotesMarkdownEditor: public QMarkdownTextEdit {
 public:
 
     explicit
-    SNotesMarkdownEditor(QWidget* parent = nullptr): QMarkdownTextEdit(parent) {
+    SNotesMarkdownEditor(QString path, QWidget* parent = nullptr):
+            QMarkdownTextEdit(parent),
+            path {path}
+    {
+    
+        if (QFile file (path);
+                file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QString text = file.readAll();
+            setPlainText(text);
+        } else {
+            /* Display warning */ QMessageBox::critical(this, "Reading Fail", "Reading from the file failed. Check the file permissions.");
+            return;
+        }
+        
         connect(
             this, &SNotesMarkdownEditor::textChanged,
             this, &SNotesMarkdownEditor::request_save
@@ -36,21 +49,6 @@ public:
     }
     
 public slots:
-    
-    inline
-    void open_file(const QString path){
-        if (this->path) save_file_immediately();
-    
-        this->path = path;
-        
-        if (QFile file (path);
-                file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            QString text = file.readAll();
-            setPlainText(text);
-        } else {
-            /* Display warning */ QMessageBox::critical(this, "Reading Fail", "Reading from the file failed. Check the file permissions.");
-        }
-    };
     
     inline
     void save_file_immediately() {

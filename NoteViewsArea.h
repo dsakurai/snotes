@@ -28,9 +28,8 @@ public slots:
             markdownEditor->deleteLater();
         }
 
-        markdownEditor = new SNotesMarkdownEditor(this);
+        markdownEditor = new SNotesMarkdownEditor(path, this);
         layout()->addWidget(markdownEditor);
-        markdownEditor->open_file(path);
     };
 
 private:
