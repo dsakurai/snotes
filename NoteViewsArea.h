@@ -22,12 +22,14 @@ public:
     
 public slots:
     void open_file(const QString path) {
-
-        if(!markdownEditor){
-            markdownEditor = new SNotesMarkdownEditor(this);
-            layout()->addWidget(markdownEditor);
+    
+        if (markdownEditor) {
+            layout()->removeWidget(markdownEditor);
+            markdownEditor->deleteLater();
         }
-        
+
+        markdownEditor = new SNotesMarkdownEditor(this);
+        layout()->addWidget(markdownEditor);
         markdownEditor->open_file(path);
     };
 
