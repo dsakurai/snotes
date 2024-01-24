@@ -68,7 +68,7 @@ public slots:
         }
 
         // The text in the editor
-        const QString text = this->document()->toRawText();
+        const QString text = this->document()->toPlainText(); // Don't use toRawText(). It will use the wrong line separator (maybe \r, I don't know which).
         if (text == original) return; // no point writing the same text
         
         // Write the content to file
