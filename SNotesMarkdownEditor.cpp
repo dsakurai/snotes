@@ -24,8 +24,6 @@ void IO::readAllNow() {
 
 void IO::save_file_immediately() {
 
-    qDebug() << "saving file";
-
     is_save_requested = false;
 
     if (editor.isNull()) return;
