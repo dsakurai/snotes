@@ -19,7 +19,8 @@ public:
         QTreeView::setModel(model);
         setRootIndex(model->index(model->rootPath()));
 
-        sortByColumn(3, Qt::SortOrder::AscendingOrder); // Sort by the file modification date
+        sortByColumn(3, Qt::SortOrder::DescendingOrder); // Sort by the file modification date
+        model->setSortOrder(Qt::SortOrder::DescendingOrder);
         setSortingEnabled(true); // For performance, call this after setting the model.
 
         // TODO Check the column names instead of relying on these magic numbers

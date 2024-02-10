@@ -72,9 +72,16 @@ bool NotesFolderModel::lessThan(const QModelIndex &source_left, const QModelInde
     const bool is_pinned_right = is_pinned(source_right, *this);
     
     // only one is pinned
-    if (is_pinned_left ^ is_pinned_right)
+    if (is_pinned_left ^ is_pinned_right) {
+        const bool pinned_is_less =  is_pinned_left && !is_pinned_right;
         // left is pinned => left is less
-        return is_pinned_left && !is_pinned_right;
+        return (sortOrder == Qt::AscendingOrder)? pinned_is_less : !pinned_is_less; // NOLINT
+    }
+        
     
     return QSortFilterProxyModel::lessThan(source_left, source_right);
+}
+
+void NotesFolderModel::setSortOrder(Qt::SortOrder order) {
+    this->sortOrder = order;
 }

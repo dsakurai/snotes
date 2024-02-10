@@ -99,12 +99,16 @@ public:
         }
         return out;
     }
+    
+    void setSortOrder(Qt::SortOrder order);
 
 signals:
     void directoryLoaded(const QString &path);
 
 protected:
     bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const override;
+
+    Qt::SortOrder sortOrder = Qt::SortOrder::AscendingOrder;
 };
 
 #endif //SIMPLEMARKDOWN_NOTESFOLDERMODEL_H
