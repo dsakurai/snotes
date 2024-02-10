@@ -51,13 +51,7 @@ public:
                     if (is_save_requested) save_file_immediately();
                 }
         );
-
-        QObject::connect(
-                editor.get(), &SNotesMarkdownEditor::textChanged,
-                [this, ask_to_save_timer=ask_to_save_timer]() {
-                    ask_to_save_timer->start(1000); // every second
-                }
-        );
+        ask_to_save_timer->start(1000); // every second
     }
 
     void readAllNow();
