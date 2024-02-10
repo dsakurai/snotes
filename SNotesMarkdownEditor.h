@@ -6,7 +6,9 @@
 #define SIMPLEMARKDOWN_SNOTESMARKDOWNEDITOR_H
 
 #include <qmarkdowntextedit.h>
+#include <QDateTime>
 #include <QFile>
+#include <QFileInfo>
 #include <QMessageBox>
 #include <QFileSystemWatcher>
 
@@ -43,7 +45,16 @@ public:
 
         QObject::connect(
                 editor.get(), &SNotesMarkdownEditor::textChanged,
-                [this]() { request_save(); }
+                [this]() {
+                    timestamps[*this->path] = QDateTime::currentDateTime();
+                }
+        );
+
+        QObject::connect(
+                editor.get(), &SNotesMarkdownEditor::textChanged,
+                [this]() {
+                    request_save();
+                }
         );
 
         {
@@ -65,7 +76,7 @@ public:
                         if (is_load_requested) readAllNow();
                     }
             );
-            ask_to_load_timer->start(500); // every 500msec
+            ask_to_load_timer->start(100); // every few hundred msecs
         }
 
         watcher.addPath(path);
@@ -92,11 +103,16 @@ public slots:
         if (!watcher.files().contains(path)) {
             watcher.addPath(path);
         }
+
+        if (editor.isNull()) return;
         
-        if (counter > 0) { // The editor saved the file.
-            --counter;
-        } else {
-            request_load();
+        const QDateTime lastModified = QFileInfo(path).lastModified();
+        if (lastModified < timestamps[path]) return;
+        
+        if (QFile file {path};
+                file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+            QString content = file.readAll();
+            if (content != editor->toPlainText()) request_load();
         }
     };
 
@@ -104,9 +120,9 @@ private:
     QFileSystemWatcher watcher;
     QPointer<SNotesMarkdownEditor> editor;
     std::optional<QString> path;
-    int counter = 0;
     bool is_save_requested = false;
     bool is_load_requested = false;
+    static inline std::map<QString, QDateTime> timestamps;
 };
 
 

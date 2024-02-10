@@ -48,6 +48,5 @@ void IO::save_file_immediately() {
     // Write the content to file
     if (QFile file (*path); file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate )) {
         file.write(text.toUtf8());
-        ++counter;
     } else /* Display warning */ QMessageBox::critical(nullptr, "Writing Fail", "Writing to the file failed. Check the file permissions.");
 }
