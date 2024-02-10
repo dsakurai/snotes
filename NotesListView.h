@@ -23,9 +23,9 @@ public:
         hideColumn(1); // file size column
         hideColumn(2); // file type column
     }
-    
-    QFileSystemModel* model() { // NOLINT overriding a method that's actually not virtual
-        auto* out = qobject_cast<QFileSystemModel*>(QTreeView::model());
+
+    NotesFolderModel* model() { // NOLINT overriding a method that's actually not virtual
+        auto* out = qobject_cast<NotesFolderModel*>(QTreeView::model());
         if (!out) {
             qFatal("Failed to access file system model");
         }
@@ -45,7 +45,8 @@ protected:
         
         if (selected.indexes().size() / num_columns == 1) {
             const QModelIndex file = selected.indexes()[0];
-            QFileSystemModel* files = model();
+            auto* files = model();
+            if (!files) throw std::runtime_error {"Failed to access QFileSystemModel"};
             QString path = files->filePath(file);
             emit singleFileSelected(path);
         }

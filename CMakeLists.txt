@@ -17,6 +17,18 @@ FetchContent_Declare(
 FetchContent_MakeAvailable(qmarkdowntext_project)
 FetchContent_GetProperties(qmarkdowntext_project) # Expose paths as variables
 
+FetchContent_Declare(
+        rapidyaml
+        GIT_REPOSITORY https://github.com/biojppm/rapidyaml.git
+        GIT_TAG v0.5.0
+)
+FetchContent_GetProperties(rapidyaml)
+if(NOT rapidyaml_POPULATED)
+    message(STATUS "Fetching rapid yaml...")
+    FetchContent_Populate(rapidyaml)
+    add_subdirectory(${rapidyaml_SOURCE_DIR} ${rapidyaml_BINARY_DIR})
+endif()
+
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED yes)
 set(CMAKE_CXX_EXTENSIONS off)
@@ -61,5 +73,6 @@ target_link_libraries(simplenotes
         Qt::Gui
         Qt::Widgets
         qmarkdowntextedit
+        ryml
 )
 
