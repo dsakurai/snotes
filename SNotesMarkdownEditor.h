@@ -14,20 +14,41 @@ class SNotesMarkdownEditor: public QMarkdownTextEdit {
     
 public:
 
+    class IO {
+    public:
+        IO(const QPointer<SNotesMarkdownEditor>& editor): editor {editor}
+         {}
+         
+         QString readAllNow() {
+
+             if (editor.isNull()) return {};
+
+             auto path = editor->getPath();
+             if (!path) return {};
+             
+             if (QFile file {*path};
+                     file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                 return file.readAll();
+             } else {
+                 /* Display warning */ QMessageBox::critical(nullptr, "Reading Fail", "Reading from the file failed. Check the file permissions.");
+                 return {};
+             }
+         }
+         
+         QPointer<SNotesMarkdownEditor> editor;
+    };
+    std::unique_ptr<IO> io;
+
     explicit
     SNotesMarkdownEditor(QString path, QWidget* parent = nullptr):
             QMarkdownTextEdit(parent),
+            io {std::make_unique<IO>(this)},
             path {path}
     {
-    
-        if (QFile file (path);
-                file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-            QString text = file.readAll();
-            setPlainText(text);
-        } else {
-            /* Display warning */ QMessageBox::critical(this, "Reading Fail", "Reading from the file failed. Check the file permissions.");
-            return;
-        }
+        
+        setPlainText(
+                io->readAllNow()
+        );
         
         connect(
             this, &SNotesMarkdownEditor::textChanged,
@@ -79,6 +100,12 @@ public slots:
 
 protected slots:
     void request_save() { is_save_requested = true; };
+
+
+public:
+    const std::optional<QString> &getPath() const {
+        return path;
+    }
     
 private:
     bool is_save_requested = false;
