@@ -1,4 +1,3 @@
-#include <ryml.hpp>
 
 #include "About_this_app.h"
 #include "Defaults.h"
@@ -11,9 +10,6 @@
 #include <QSortFilterProxyModel>
 #include <QStandardPaths>
 #include <QTimer>
-
-#include <iostream>
-#include <fstream>
 
 void show_warning_and_request_quit(QString message) {
     auto* dialog = new QDialog();
@@ -44,53 +40,6 @@ void show_warning_and_request_quit(QString message) {
     );
 
     dialog->open();
-}
-
-bool is_pinned(const std::string& path) {
-
-    // These are re-allocated...
-    // Better, use an object pool.
-    std::string line;
-    std::string yaml_header;
-    
-    if (std::ifstream stream {path};
-            stream.is_open() ) { // I could read the file in binary mode for performance, maybe?
-
-        std::getline(stream, line);
-
-        if (yaml_header.size() > 1024) std::string{}.swap(yaml_header); // Free RAM
-
-        // yaml header?
-        if (line != "---") return false; // no
-
-        bool found = false;
-        while (std::getline(stream, line)) {
-
-            if (line == "---") {
-                found = true;
-                break;
-            }
-
-            yaml_header += line + "\n";
-        }
-
-        if(!found) return false;
-
-        ryml::Tree tree = ryml::parse_in_place(ryml::substr(
-                yaml_header.data(), yaml_header.size()));
-
-        auto pinned = tree["pinned"];
-        if (pinned.valid() && pinned.has_val() ) {
-            auto val = pinned.val();
-            if ((val == "true") || (val == "yes")) {
-            }
-        }
-
-    } else {
-        qDebug() << "Failed to read file.";
-    }
-    
-    return false;
 }
 
 void open_main_window() {

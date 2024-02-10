@@ -75,9 +75,13 @@ public:
     
         QString out {""};
         
-        if(const QFileSystemModel* model = sourceFileSystemModel()) {
-            out = model->filePath(
-                    mapToSource(index)
+        if(const QFileSystemModel* source_model = sourceFileSystemModel()) {
+
+            QModelIndex index_for_source = index;
+            if (index.model() == this) index_for_source = mapToSource(index); 
+
+            out = source_model->filePath(
+                    index_for_source
             );
         }
         
@@ -98,6 +102,9 @@ public:
 
 signals:
     void directoryLoaded(const QString &path);
+
+protected:
+    bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const override;
 };
 
 #endif //SIMPLEMARKDOWN_NOTESFOLDERMODEL_H

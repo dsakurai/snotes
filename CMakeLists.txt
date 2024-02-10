@@ -39,6 +39,7 @@ add_executable(simplenotes
         MainWindow.h
         MainWindow.ui
         NotesFolderModel.h
+        NotesFolderModel.cpp
         NotesListView.h
         Defaults.h
         
