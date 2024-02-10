@@ -24,6 +24,7 @@ public:
         setSourceModel(fileSystemModel);
     }
 
+private:
     void setSourceModel(QAbstractItemModel *sourceModel) override {
     
         if (this->sourceModel()) {
@@ -44,7 +45,14 @@ public:
         auto* model =  sourceModel();
         return dynamic_cast<QFileSystemModel*>(model);
     }
-    
+
+    [[nodiscard]]
+    const QFileSystemModel* sourceFileSystemModel() const {
+        auto* model =  sourceModel();
+        return dynamic_cast<const QFileSystemModel*>(model);
+    }
+
+public:
     inline
     void setRootPath(const QString& path) {
         if(QFileSystemModel* model = sourceFileSystemModel()) {
@@ -63,12 +71,14 @@ public:
         return out;
     }
 
-    QString filePath(const QModelIndex &index) {
+    QString filePath(const QModelIndex &index) const {
     
         QString out {""};
         
-        if(QFileSystemModel* model = sourceFileSystemModel()) {
-            out = model->filePath(index);
+        if(const QFileSystemModel* model = sourceFileSystemModel()) {
+            out = model->filePath(
+                    mapToSource(index)
+            );
         }
         
         return out;
