@@ -61,7 +61,7 @@ public:
             return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
 
         // ancestor
-        return true; // Always accept the root item
+        return true; // Always accept ancestors
     }
 
     inline
