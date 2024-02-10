@@ -5,6 +5,7 @@
 #include "SNotesMarkdownEditor.h"
 
 void IO::readAllNow() {
+    is_load_requested = false;
 
     if (editor.isNull()) return;
 
@@ -15,11 +16,11 @@ void IO::readAllNow() {
 
         editor->setPlainText(
                 file.readAll());
-
-    } else {
-        /* Display warning */ QMessageBox::critical(nullptr, "Reading Fail", "Reading from the file failed. Check the file permissions.");
-        return;
     }
+//     else {
+//        /* Display warning */ QMessageBox::critical(nullptr, "Reading Fail", "Reading from the file failed. Check the file permissions.");
+//        return;
+//    }
 }
 
 void IO::save_file_immediately() {
@@ -47,5 +48,6 @@ void IO::save_file_immediately() {
     // Write the content to file
     if (QFile file (*path); file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate )) {
         file.write(text.toUtf8());
+        ++counter;
     } else /* Display warning */ QMessageBox::critical(nullptr, "Writing Fail", "Writing to the file failed. Check the file permissions.");
 }
