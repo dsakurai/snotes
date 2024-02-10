@@ -45,6 +45,25 @@ private:
     }
 
 public:
+
+    bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override
+    {
+        QString root_path = sourceFileSystemModel()->rootPath();
+        root_path = QDir(root_path).canonicalPath();
+        root_path = QDir::cleanPath(root_path);
+        
+        QString parent_path = filePath(source_parent);
+        parent_path = QDir(parent_path).canonicalPath();
+        parent_path = QDir::cleanPath(parent_path);
+
+        // offspring
+        if (parent_path.startsWith(root_path))
+            return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
+
+        // ancestor
+        return true; // Always accept the root item
+    }
+
     inline
     void setRootPath(const QString& path) {
         if(QFileSystemModel* model = sourceFileSystemModel()) {
@@ -98,7 +117,7 @@ signals:
     void directoryLoaded(const QString &path);
 
 protected:
-    bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const override;
+//    bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const override;
 
     Qt::SortOrder sortOrder = Qt::SortOrder::AscendingOrder;
 };

@@ -63,24 +63,24 @@ bool is_pinned(const QModelIndex &index, const NotesFolderModel& model) {
     return is_pinned(path.toStdString());
 }
 
-bool NotesFolderModel::lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const {
-
-    // equal => false
-    if (source_left == source_right) return QSortFilterProxyModel::lessThan(source_left, source_right);
-
-    const bool is_pinned_left  = is_pinned(source_left, *this);
-    const bool is_pinned_right = is_pinned(source_right, *this);
-    
-    // only one is pinned
-    if (is_pinned_left ^ is_pinned_right) {
-        const bool pinned_is_less =  is_pinned_left && !is_pinned_right;
-        // left is pinned => left is less
-        return (sortOrder == Qt::AscendingOrder)? pinned_is_less : !pinned_is_less; // NOLINT
-    }
-        
-    
-    return QSortFilterProxyModel::lessThan(source_left, source_right);
-}
+//bool NotesFolderModel::lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const {
+//
+//    // equal => false
+//    if (source_left == source_right) return QSortFilterProxyModel::lessThan(source_left, source_right);
+//
+//    const bool is_pinned_left  = is_pinned(source_left, *this);
+//    const bool is_pinned_right = is_pinned(source_right, *this);
+//    
+//    // only one is pinned
+//    if (is_pinned_left ^ is_pinned_right) {
+//        const bool pinned_is_less =  is_pinned_left && !is_pinned_right;
+//        // left is pinned => left is less
+//        return (sortOrder == Qt::AscendingOrder)? pinned_is_less : !pinned_is_less; // NOLINT
+//    }
+//        
+//    
+//    return QSortFilterProxyModel::lessThan(source_left, source_right);
+//}
 
 void NotesFolderModel::setSortOrder(Qt::SortOrder order) {
     this->sortOrder = order;

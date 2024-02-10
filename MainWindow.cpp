@@ -59,7 +59,7 @@ MainWindow::MainWindow(QWidget *parent) :
     
     ui->setupUi(this);
     
-    auto *model      = new NotesFolderModel{};
+    auto *model = new NotesFolderModel{this};
 
     auto* fileSystemModel = new QFileSystemModel(this);
     fileSystemModel->setNameFilters(QStringList("*.md"));
@@ -71,15 +71,11 @@ MainWindow::MainWindow(QWidget *parent) :
     model->setRootPath(notes_folder.toString());
     ui->notesListView->setProjectFolderModel(model);
     
-//    model->setFilterKeyColumn(0);
-//    
-//    QObject::connect(
-//            ui->searchLineEdit, &QLineEdit::textEdited,
-//            model, &NotesFolderModel::setFilterFixedString
-//    );
-
-//    model->setFilterWildcard("*3*");
-//    model->setFilterFixedString("3");
+    model->setFilterKeyColumn(0);
+    QObject::connect(
+            ui->searchLineEdit, &QLineEdit::textEdited,
+            model, &NotesFolderModel::setFilterFixedString
+    );
 
     // Create a new note
     QShortcut *shortcut = new QShortcut(QKeySequence::New, this);
