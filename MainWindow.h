@@ -15,6 +15,8 @@ QT_END_NAMESPACE
 
 class NotesListView;
 
+void show_warning_and_request_quit(QString message);
+
 class MainWindow : public QMainWindow {
 Q_OBJECT
 

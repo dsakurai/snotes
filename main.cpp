@@ -11,52 +11,11 @@
 #include <QStandardPaths>
 #include <QTimer>
 
-void show_warning_and_request_quit(QString message) {
-    auto* dialog = new QDialog();
-
-    // app modal
-    dialog->setModal(true);
-
-    auto* layout = new QHBoxLayout(dialog);
-
-    layout->addWidget(
-            new QLabel(message, dialog)
-    );
-    auto* ok_button = new QPushButton("OK", dialog);
-    layout->addWidget(
-            ok_button
-    );
-
-    QObject::connect(
-            dialog, &QDialog::finished,
-            [](int result) {
-                QCoreApplication::quit();
-            }
-    );
-
-    QObject::connect(
-            ok_button, &QPushButton::clicked,
-            dialog, &QDialog::accept
-    );
-
-    dialog->open();
-}
 
 void open_main_window() {
 
-    QSettings settings;
-    QVariant notes_folder = settings.value(Settings::Keys::UserDefaultsGroup::notes_folder);
-    
-    if (not notes_folder.isValid()) show_warning_and_request_quit("Failed to read the notes folder from the settings. Quitting app.");
-    
-    if (not QDir(notes_folder.toString()).exists()) show_warning_and_request_quit("The notes folder does not exist. Quitting app.");
     
     auto *mainWindow = new MainWindow();
-    auto *model      = new NotesFolderModel{};
-
-    model->setRootPath(notes_folder.toString());
-    mainWindow->notesListView()->setProjectFolderModel(model);
-    
 //    QObject::connect(model, &QFileSystemModel::directoryLoaded, [model](const QString  &path) {
 //    
 //        qDebug() << "dir loaded";
