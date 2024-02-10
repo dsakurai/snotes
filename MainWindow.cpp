@@ -45,6 +45,8 @@ void show_warning_and_request_quit(QString message) {
 MainWindow::MainWindow(QWidget *parent) :
         QMainWindow(parent), ui(new Ui::MainWindow) {
 
+    setAttribute(Qt::WA_DeleteOnClose); // Delete window on close.
+
     QSettings settings;
     QVariant notes_folder = settings.value(Settings::Keys::UserDefaultsGroup::notes_folder);
 
