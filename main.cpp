@@ -10,6 +10,7 @@
 #include <QSortFilterProxyModel>
 #include <QStandardPaths>
 #include <QTimer>
+#include <QShortcut>
 
 
 void open_main_window() {
@@ -30,9 +31,6 @@ void open_main_window() {
 //    });
 
     mainWindow->show();
-    
-    auto *mainWindow2 = new MainWindow();
-    mainWindow2->show();
 }
 
 bool initialize_user_folder(const QVariant& path) {

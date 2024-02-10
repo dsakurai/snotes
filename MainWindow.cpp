@@ -117,13 +117,14 @@ MainWindow::MainWindow(QWidget *parent) :
             ui->notesListView, &NotesListView::singleFileSelected,
             ui->noteViewsArea, &NoteViewsArea::open_file
     );
-//    QShortcut* new_window_shortcut = new QShortcut(QKeySequence("Ctrl+Alt+N"), this); // Use "Cmd+Alt+N" for macOS
-//    connect(new_window_shortcut, &QShortcut::activated, 
-//        []() {
-//            auto* window = new MainWindow{};
-//            window->show();
-//        }
-//    );
+    
+    new QShortcut(QKeySequence("Ctrl+Alt+N"), this,
+                  []() {
+                      auto* window = new MainWindow{};
+                      window->show();
+                  },
+                  Qt::ShortcutContext::WindowShortcut
+    );
 }
 
 MainWindow::~MainWindow() {
