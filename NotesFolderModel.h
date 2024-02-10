@@ -14,17 +14,8 @@ class NotesFolderModel: public QSortFilterProxyModel {// TODO maybe QProxyModel 
 
 public:
     explicit
-    NotesFolderModel(QObject* parent = nullptr): QSortFilterProxyModel(parent) {
-    
-        auto* fileSystemModel = new QFileSystemModel(this);
-        fileSystemModel->setNameFilters(QStringList("*.md"));
-        fileSystemModel->setNameFilterDisables(false);
-        fileSystemModel->setFilter(QDir::Files);
+    NotesFolderModel(QObject* parent = nullptr): QSortFilterProxyModel(parent) {}
 
-        setSourceModel(fileSystemModel);
-    }
-
-private:
     void setSourceModel(QAbstractItemModel *sourceModel) override {
     
         if (this->sourceModel()) {
@@ -41,6 +32,7 @@ private:
         }
     }
 
+private:
     QFileSystemModel* sourceFileSystemModel() {
         auto* model =  sourceModel();
         return dynamic_cast<QFileSystemModel*>(model);

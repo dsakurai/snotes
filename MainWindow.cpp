@@ -60,13 +60,23 @@ MainWindow::MainWindow(QWidget *parent) :
     ui->setupUi(this);
     
     auto *model      = new NotesFolderModel{};
+
+    auto* fileSystemModel = new QFileSystemModel(this);
+    fileSystemModel->setNameFilters(QStringList("*.md"));
+    fileSystemModel->setNameFilterDisables(false);
+    fileSystemModel->setFilter(QDir::Files);
+
+    model->setSourceModel(fileSystemModel);
+    
     model->setRootPath(notes_folder.toString());
     ui->notesListView->setProjectFolderModel(model);
     
+//    model->setFilterKeyColumn(0);
+//    
 //    QObject::connect(
-//            mainWindow->ui->searchLineEdit, &QLineEdit::textEdited,
+//            ui->searchLineEdit, &QLineEdit::textEdited,
+//            model, &NotesFolderModel::setFilterFixedString
 //    );
-//    mainWindow->ui->searchLineEdit->
 
 //    model->setFilterWildcard("*3*");
 //    model->setFilterFixedString("3");
