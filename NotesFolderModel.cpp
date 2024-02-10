@@ -85,3 +85,37 @@ bool is_pinned(const QModelIndex &index, const NotesFolderModel& model) {
 void NotesFolderModel::setSortOrder(Qt::SortOrder order) {
     this->sortOrder = order;
 }
+
+bool NotesFolderModel::filterFile(int source_row, const QModelIndex &source_parent) const {
+
+    if (QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent)) {
+        // file survives the default filtering
+        return true;
+    }
+    
+    // File is to be filtered away since the title does not match the query.
+    // Check the file contents now...
+
+    auto* fileSystemModel = sourceFileSystemModel();
+
+    // check file contents
+    QModelIndex index = fileSystemModel->index(source_row, 0, source_parent);
+    QString filePath = fileSystemModel->filePath(index);
+
+    QFile file(filePath);
+
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return false; // File couldn't be opened
+
+    QTextStream in(&file);
+    QString content = in.readAll();
+    file.close();
+    
+    // Better, allow multiple words rather than using fixed string...
+    // I should not use QSortFilterProxyModel::filterAcceptsRow.
+    
+    auto re = filterRegularExpression();
+    re.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
+
+    return re.match(content).hasMatch();
+}

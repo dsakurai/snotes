@@ -46,6 +46,8 @@ private:
 
 public:
 
+    bool filterFile(int source_row, const QModelIndex &source_parent) const;
+
     bool filterAcceptsRow(int source_row, const QModelIndex &source_parent) const override
     {
         QString root_path = sourceFileSystemModel()->rootPath();
@@ -58,7 +60,7 @@ public:
 
         // offspring
         if (parent_path.startsWith(root_path))
-            return QSortFilterProxyModel::filterAcceptsRow(source_row, source_parent);
+            return filterFile(source_row, source_parent);
 
         // ancestor
         return true; // Always accept ancestors
