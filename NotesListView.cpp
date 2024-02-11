@@ -15,19 +15,26 @@ void NotesListView::reveal_in_folder() {
 
     auto to_file_path = std::ranges::views::transform(
         [&files](const QModelIndex& index) -> QString {
-            return QString(R"( POSIX file "%1" )").arg(files->filePath(index));
+            return files->filePath(index);
         }
     );
     
     auto file_paths = selectionModel->selectedRows() | to_file_path;
     
-    QString files_str = QStringList{file_paths.begin(), file_paths.end()}.join(", "); 
-    
     QString script = QString(R"(
-tell application "Finder"
-    activate
-    reveal {%1}
-end tell
-)").arg(files_str);
-    QProcess::startDetached("osascript", QStringList() << "-e" << script);
+        on run argv
+            set posixFileList to {}
+
+            repeat with aPath in argv
+                set end of posixFileList to POSIX file aPath as string
+            end repeat
+
+            tell application "Finder"
+                activate
+                reveal posixFileList
+            end tell
+        end run)");
+    QProcess::startDetached("osascript",
+                            QStringList() << "-e" << script
+                                          << QStringList{file_paths.begin(), file_paths.end()});
 }
