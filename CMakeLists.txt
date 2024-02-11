@@ -34,6 +34,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED yes)
 set(CMAKE_CXX_EXTENSIONS off)
 
 add_executable(simplenotes
+        MACOSX_BUNDLE
         main.cpp
         MainWindow.cpp
         MainWindow.h
@@ -50,6 +51,8 @@ add_executable(simplenotes
         SNotesMarkdownEditor.h
         NoteViewsArea.h
         NotesListView.cpp
+
+        resources/icons/icon.icns
 )
 
 set_target_properties(simplenotes PROPERTIES CXX_SCAN_FOR_MODULES OFF)
@@ -78,3 +81,5 @@ target_link_libraries(simplenotes
         ryml
 )
 
+set_source_files_properties(resources/icons/icon.icns PROPERTIES MACOSX_PACKAGE_LOCATION "Resources")
+set(MACOSX_BUNDLE_ICON_FILE icon.icns)
