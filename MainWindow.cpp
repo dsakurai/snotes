@@ -93,7 +93,7 @@ MainWindow::MainWindow(QWidget *parent) :
     );
 
     // Create a new note
-    QShortcut *shortcut = new QShortcut(QKeySequence::New, this,
+    new QShortcut(QKeySequence::New, this,
                                         [this]() {
                                             QString dir_path = ui->notesListView->model()->rootPath();
                                             QDir dir (dir_path);
