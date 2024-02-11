@@ -13,7 +13,7 @@ class NotesListView: public QTreeView {
 
 public:
 
-    using QTreeView::QTreeView;
+    NotesListView(QWidget* parent = nullptr);
 
     void setProjectFolderModel(NotesFolderModel *model) {
         QTreeView::setModel(model);
@@ -53,8 +53,6 @@ protected:
             QString path = files->filePath(file);
             emit singleFileSelected(path);
         }
-
-        reveal_in_folder();
 
         QTreeView::selectionChanged(selected, deselected);
     }

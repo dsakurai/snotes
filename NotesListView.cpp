@@ -4,6 +4,8 @@
 
 #include "NotesListView.h"
 #include <ranges>
+
+#include <QMenu>
 #include <QProcess>
 
 void NotesListView::reveal_in_folder() {
@@ -40,4 +42,21 @@ void NotesListView::reveal_in_folder() {
     QProcess::startDetached("osascript",
                             QStringList() << "-e" << script
                                           << QStringList{file_paths.begin(), file_paths.end()});
+}
+
+NotesListView::NotesListView(QWidget *parent) : QTreeView(parent) {
+
+    // Context menu
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(this, &QTreeView::customContextMenuRequested,
+            [this](const QPoint &point) {
+                QMenu contextMenu (tr("Context Menu"), this);
+                
+                auto* reveal = new QAction("Reveal Folder", this);
+                connect(reveal, &QAction::triggered, this, &NotesListView::reveal_in_folder);
+                contextMenu.addAction(reveal);
+
+                contextMenu.exec(mapToGlobal(point));
+            });
+
 }
