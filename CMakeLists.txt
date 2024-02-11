@@ -49,6 +49,7 @@ add_executable(simplenotes
         SNotesMarkdownEditor.cpp
         SNotesMarkdownEditor.h
         NoteViewsArea.h
+        NotesListView.cpp
 )
 
 set_target_properties(simplenotes PROPERTIES CXX_SCAN_FOR_MODULES OFF)

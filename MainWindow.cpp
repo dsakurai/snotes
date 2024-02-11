@@ -9,7 +9,9 @@
 #include "ui_MainWindow.h"
 #include "Settings.h"
 
+#include <QProcess>
 #include <QShortcut>
+#include <QStringList>
 
 void show_warning_and_request_quit(QString message) {
     auto* dialog = new QDialog();

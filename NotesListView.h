@@ -39,6 +39,9 @@ public:
 signals:
     void singleFileSelected(QString path); //NOLINT signal has not implementation
     
+public slots:
+    void reveal_in_folder();
+    
 protected:
     inline
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override {
@@ -50,6 +53,8 @@ protected:
             QString path = files->filePath(file);
             emit singleFileSelected(path);
         }
+
+        reveal_in_folder();
 
         QTreeView::selectionChanged(selected, deselected);
     }
