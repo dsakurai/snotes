@@ -68,19 +68,22 @@ bool NotesFolderModel::lessThan(const QModelIndex &source_left, const QModelInde
 
     // equal => false
     if (source_left == source_right) return QSortFilterProxyModel::lessThan(source_left, source_right);
-
-//    const bool is_pinned_left  = is_pinned(source_left, *this);
-//    const bool is_pinned_right = is_pinned(source_right, *this);
-//
-//    // only one is pinned
-//    if (is_pinned_left ^ is_pinned_right) {
-//        const bool pinned_is_less =  is_pinned_left && !is_pinned_right;
-//        // left is pinned => left is less
-//        return (sortOrder == Qt::AscendingOrder)? pinned_is_less : !pinned_is_less; // NOLINT
-//    }
+    
 
     auto* filesystemmodel = this->sourceFileSystemModel();
-//    auto* m2 = dynamic_cast<const FileSystemModel*>(m);
+    
+    const QString path_left  = filesystemmodel->filePath(source_left);
+    const QString path_right = filesystemmodel->filePath(source_right);
+
+    const bool is_pinned_left  = pinned_files_set.find(path_left) != pinned_files_set.end();
+    const bool is_pinned_right = pinned_files_set.find(path_right) != pinned_files_set.end();
+
+    // only one is pinned
+    if (is_pinned_left ^ is_pinned_right) {
+        const bool pinned_is_less =  is_pinned_left && !is_pinned_right;
+        // left is pinned => left is less
+        return (sortOrder == Qt::AscendingOrder)? pinned_is_less : !pinned_is_less; // NOLINT
+    }
 
     std::filesystem::file_time_type tl, tr;
     try {
@@ -139,4 +142,22 @@ bool NotesFolderModel::filterFile(int source_row, const QModelIndex &source_pare
     re.setPatternOptions(QRegularExpression::CaseInsensitiveOption);
 
     return re.match(content).hasMatch();
+}
+
+void NotesFolderModel::update_pinned_files_set(QFileSystemModel* fileSystemModel) {
+
+    pinned_files_set.clear();
+
+    const QModelIndex root = fileSystemModel->index(fileSystemModel->rootPath());
+
+    const int rows = fileSystemModel->rowCount(root);
+
+    for (int r = 0; r < rows; ++r) {
+        const QModelIndex child = fileSystemModel->index(r, 0, root);
+        const QString path = fileSystemModel->filePath(child);
+        if (is_pinned(path.toStdString())) {
+            pinned_files_set.insert(path);
+        }
+    }
+
 }

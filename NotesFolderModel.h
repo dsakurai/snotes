@@ -7,6 +7,9 @@
 
 #include <QFileSystemModel>
 #include <QSortFilterProxyModel>
+#include <set>
+
+bool is_pinned(const std::string& path);
 
 class NotesFolderModel: public QSortFilterProxyModel {// TODO maybe QProxyModel is better?
 
@@ -16,23 +19,24 @@ public:
     explicit
     NotesFolderModel(QObject* parent = nullptr): QSortFilterProxyModel(parent) {}
 
-    void setSourceModel(QAbstractItemModel *sourceModel) override {
+    void setSourceModel(QFileSystemModel *sourceModel) {
     
-        if (this->sourceModel()) {
-            throw std::runtime_error {"source model is already set."};
-            // We don't allow this because we don't want to implement the logic to un-connect the signal-slots.
+        if (sourceFileSystemModel() && (sourceFileSystemModel()->rootPath() != sourceModel->rootPath())) {
+            throw std::runtime_error {"Root path is changed."};
         }
     
         if (auto* fileSystemModel = dynamic_cast<QFileSystemModel*>(sourceModel)) {
+            update_pinned_files_set(fileSystemModel);
+
             QSortFilterProxyModel::setSourceModel(fileSystemModel);
-            
-            connect(fileSystemModel, &QFileSystemModel::directoryLoaded,
-                this, &NotesFolderModel::directoryLoaded
-            );
         }
     }
+    
 
 private:
+
+    void update_pinned_files_set(QFileSystemModel* fileSystemModel);
+    
     QFileSystemModel* sourceFileSystemModel() {
         auto* model =  sourceModel();
         return dynamic_cast<QFileSystemModel*>(model);
@@ -115,13 +119,12 @@ public:
     
     void setSortOrder(Qt::SortOrder order);
 
-signals:
-    void directoryLoaded(const QString &path);
-
 protected:
     bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const override;
 
     Qt::SortOrder sortOrder = Qt::SortOrder::AscendingOrder;
+public:
+    std::set<QString> pinned_files_set;
 };
 
 #endif //SIMPLEMARKDOWN_NOTESFOLDERMODEL_H

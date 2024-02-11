@@ -63,7 +63,6 @@ MainWindow::MainWindow(QWidget *parent) :
     
     ui->setupUi(this);
     
-    auto *model = new NotesFolderModel{this};
 
     auto* fileSystemModel = new QFileSystemModel(this);
     fileSystemModel->setNameFilters(QStringList("*.md"));
@@ -71,16 +70,25 @@ MainWindow::MainWindow(QWidget *parent) :
     fileSystemModel->setFilter(QDir::Files);
     fileSystemModel->setReadOnly(false); // to allow renaming of files
 
-    model->setSourceModel(fileSystemModel);
+    auto *model = new NotesFolderModel{this};
     
-    model->setRootPath(notes_folder.toString());
-    ui->notesListView->setProjectFolderModel(model);
+    // Only after directory loading is complete, we set the source model to the filter.
+    // This is because we want to create a list of pinned files,
+    // and this is best done after the directory is loaded in the source QFileSystemModel
+    connect(fileSystemModel, &QFileSystemModel::directoryLoaded,
+            [this, model=model, fileSystemModel=fileSystemModel,notes_folder=notes_folder](const QString &path) {
+                model->setSourceModel(fileSystemModel);
+                ui->notesListView->setProjectFolderModel(model);
+            }
+    );
     
     model->setFilterKeyColumn(0);
     QObject::connect(
             ui->searchLineEdit, &QLineEdit::textEdited,
             model, &NotesFolderModel::setFilterFixedString
     );
+    
+    fileSystemModel->setRootPath(notes_folder.toString());
 
     // Allow renaming files from the notes list
     // TODO Instead, do it by editing the H1 header in the note?
