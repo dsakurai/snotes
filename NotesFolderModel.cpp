@@ -6,7 +6,8 @@
 
 #include "NotesFolderModel.h"
 
-
+#include <chrono>
+#include <filesystem>
 #include <iostream>
 #include <fstream>
 
@@ -68,18 +69,38 @@ bool NotesFolderModel::lessThan(const QModelIndex &source_left, const QModelInde
     // equal => false
     if (source_left == source_right) return QSortFilterProxyModel::lessThan(source_left, source_right);
 
-    const bool is_pinned_left  = is_pinned(source_left, *this);
-    const bool is_pinned_right = is_pinned(source_right, *this);
+//    const bool is_pinned_left  = is_pinned(source_left, *this);
+//    const bool is_pinned_right = is_pinned(source_right, *this);
+//
+//    // only one is pinned
+//    if (is_pinned_left ^ is_pinned_right) {
+//        const bool pinned_is_less =  is_pinned_left && !is_pinned_right;
+//        // left is pinned => left is less
+//        return (sortOrder == Qt::AscendingOrder)? pinned_is_less : !pinned_is_less; // NOLINT
+//    }
 
-    // only one is pinned
-    if (is_pinned_left ^ is_pinned_right) {
-        const bool pinned_is_less =  is_pinned_left && !is_pinned_right;
-        // left is pinned => left is less
-        return (sortOrder == Qt::AscendingOrder)? pinned_is_less : !pinned_is_less; // NOLINT
+    auto* filesystemmodel = this->sourceFileSystemModel();
+//    auto* m2 = dynamic_cast<const FileSystemModel*>(m);
+
+    std::filesystem::file_time_type tl, tr;
+    try {
+        std::filesystem::file_time_type l;
+        std::string s = filesystemmodel->filePath(source_left).toStdString();
+        tl = std::filesystem::last_write_time(s);
+    } catch (const std::filesystem::filesystem_error& err) {
+        std::cerr << "Error: " << err.what() << '\n';
     }
+    try {
+        std::filesystem::file_time_type r;
+        std::string s = filesystemmodel->filePath(source_right).toStdString();
+        tr = std::filesystem::last_write_time(s);
+    } catch (const std::filesystem::filesystem_error& err) {
+        std::cerr << "Error: " << err.what() << '\n';
+    }
+    
+    return tl < tr;
 
-
-    return QSortFilterProxyModel::lessThan(source_left, source_right);
+//    return QSortFilterProxyModel::lessThan(source_left, source_right);
 }
 
 void NotesFolderModel::setSortOrder(Qt::SortOrder order) {
