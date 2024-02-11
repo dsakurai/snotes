@@ -92,6 +92,11 @@ MainWindow::MainWindow(QWidget *parent) :
             }
     );
 
+    // Set splitter sizes. See https://stackoverflow.com/questions/43831474/how-to-equally-distribute-the-width-of-qsplitter
+    ui->splitter->setStretchFactor(0, 1); // Hack
+    ui->splitter->setStretchFactor(1, 1); // Hack
+    ui->splitter->setSizes({4000, 6000}); // These ints must be larger than the minimum widths
+
     // Create a new note
     new QShortcut(QKeySequence::New, this,
                                         [this]() {
