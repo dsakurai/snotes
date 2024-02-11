@@ -69,6 +69,7 @@ MainWindow::MainWindow(QWidget *parent) :
     fileSystemModel->setNameFilters(QStringList("*.md"));
     fileSystemModel->setNameFilterDisables(false);
     fileSystemModel->setFilter(QDir::Files);
+    fileSystemModel->setReadOnly(false); // to allow renaming of files
 
     model->setSourceModel(fileSystemModel);
     
@@ -79,6 +80,16 @@ MainWindow::MainWindow(QWidget *parent) :
     QObject::connect(
             ui->searchLineEdit, &QLineEdit::textEdited,
             model, &NotesFolderModel::setFilterFixedString
+    );
+
+    // Allow renaming files from the notes list
+    // TODO Instead, do it by editing the H1 header in the note?
+    ui->notesListView->setEditTriggers(QAbstractItemView::DoubleClicked | QAbstractItemView::EditKeyPressed);
+    connect(fileSystemModel, &QFileSystemModel::fileRenamed,
+            [this](const QString &path, const QString &oldName, const QString &newName) {
+                ui->noteViewsArea->open_file( // Open
+                        QDir(path).filePath(newName)); // the new file
+            }
     );
 
     // Create a new note
