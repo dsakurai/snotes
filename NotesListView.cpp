@@ -15,7 +15,10 @@ void NotesListView::reveal_in_folder() {
 
     auto to_file_path = std::ranges::views::transform(
         [&files](const QModelIndex& index) -> QString {
-            return files->filePath(index);
+            return
+                    QDir::toNativeSeparators( // Use native path separator
+                            QDir::cleanPath(  // Resolve ".." etc.
+                                    files->filePath(index)));
         }
     );
     
