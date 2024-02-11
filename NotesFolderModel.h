@@ -115,12 +115,8 @@ public:
         return out;
     }
     
-    void setSortOrder(Qt::SortOrder order);
-
 protected:
     bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const override;
-
-    Qt::SortOrder sortOrder = Qt::SortOrder::AscendingOrder;
 public:
     std::set<QString> pinned_files_set;
 };

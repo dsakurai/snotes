@@ -63,7 +63,6 @@ bool NotesFolderModel::lessThan(const QModelIndex &source_left, const QModelInde
 
     // equal => false
     if (source_left == source_right) return QSortFilterProxyModel::lessThan(source_left, source_right);
-    
 
     auto* filesystemmodel = this->sourceFileSystemModel();
     
@@ -77,8 +76,10 @@ bool NotesFolderModel::lessThan(const QModelIndex &source_left, const QModelInde
     if (is_pinned_left ^ is_pinned_right) {
         const bool pinned_is_less =  is_pinned_left && !is_pinned_right;
         // left is pinned => left is less
-        return (sortOrder == Qt::AscendingOrder)? pinned_is_less : !pinned_is_less; // NOLINT
+        return (sortOrder() == Qt::AscendingOrder)? pinned_is_less : !pinned_is_less; // NOLINT
     }
+
+    if (source_left.column() != 3) return QSortFilterProxyModel::lessThan(source_left, source_right);
 
     std::filesystem::file_time_type tl, tr;
     try {
@@ -96,13 +97,7 @@ bool NotesFolderModel::lessThan(const QModelIndex &source_left, const QModelInde
         std::cerr << "Error: " << err.what() << '\n';
     }
     
-    return tl < tr;
-
-//    return QSortFilterProxyModel::lessThan(source_left, source_right);
-}
-
-void NotesFolderModel::setSortOrder(Qt::SortOrder order) {
-    this->sortOrder = order;
+    return tl < tr; // NOLINT
 }
 
 bool NotesFolderModel::filterFile(int source_row, const QModelIndex &source_parent) const {
