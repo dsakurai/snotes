@@ -119,7 +119,7 @@ signals:
     void directoryLoaded(const QString &path);
 
 protected:
-//    bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const override;
+    bool lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const override;
 
     Qt::SortOrder sortOrder = Qt::SortOrder::AscendingOrder;
 };
