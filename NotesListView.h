@@ -42,14 +42,11 @@ signals:
 protected:
     inline
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override {
-        const auto num_columns = model()->columnCount();
-        
-        if (selected.indexes().size() % num_columns != 0) qFatal("User can somehow select a part of a column. This was not anticipated when calculating the number of rows selected.");
-        
-        if (selected.indexes().size() / num_columns == 1) {
+
+        const NotesFolderModel* files = model();
+        const auto* selectionModel = this->selectionModel();
+        if (files && selectionModel && selectionModel->selectedRows().size() == 1) {
             const QModelIndex file = selected.indexes()[0];
-            auto* files = model();
-            if (!files) throw std::runtime_error {"Failed to access QFileSystemModel"};
             QString path = files->filePath(file);
             emit singleFileSelected(path);
         }
