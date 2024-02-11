@@ -41,6 +41,11 @@ public:
             editor {editor},
             path {path}
     {
+        if (!QFile(path).exists()) {
+            editor->deleteLater();
+            return;
+        }
+    
         readAllNow();
 
         QObject::connect(
@@ -94,13 +99,20 @@ public:
     void request_save() {is_save_requested = true;}
 
     ~IO() {
-        if (path) save_file_immediately();
+        if (path && QFile(*path).exists()) save_file_immediately();
     }
 
 public slots:
     void try_load(QString path) {
+
+        if (!QFile(path).exists()) {
+            editor->deleteLater();
+            return;
+        }
+    
         // In case the file is replaced with a new one at the same path, we add the path again.
         if (!watcher.files().contains(path)) {
+            qDebug() << "path: " << path;
             watcher.addPath(path);
         }
 

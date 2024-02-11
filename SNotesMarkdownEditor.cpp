@@ -9,18 +9,20 @@ void IO::readAllNow() {
 
     if (editor.isNull()) return;
 
-    if (!path) return;
+    if (!path) {
+        editor->deleteLater();
+        return;
+    }
 
     if (QFile file {*path};
             file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        
+        const QString content = file.readAll(); 
+        editor->setPlainText(std::move(content));
 
-        editor->setPlainText(
-                file.readAll());
+    } else {
+        editor->deleteLater(); return;
     }
-//     else {
-//        /* Display warning */ QMessageBox::critical(nullptr, "Reading Fail", "Reading from the file failed. Check the file permissions.");
-//        return;
-//    }
 }
 
 void IO::save_file_immediately() {

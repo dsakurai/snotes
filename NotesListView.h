@@ -44,15 +44,28 @@ public slots:
     void customContextmenu(const QPoint& point);
     
 protected:
+
+    // This gets called:
+    // 1. when the selected items have changed
+    // 2. when the list of selectable items have changed
+    // To see this, you can check it by printing the selected and de-selected items.
+    // In case 2., both selected and deselected are 0.
+    // qDebug() << "selected: " << selected.size() << "deselected: " << deselected.size();
     inline
     void selectionChanged(const QItemSelection &selected, const QItemSelection &deselected) override {
 
         const NotesFolderModel* files = model();
         const auto* selectionModel = this->selectionModel();
-        if (files && selectionModel && selectionModel->selectedRows().size() == 1) {
-            const QModelIndex file = selected.indexes()[0];
-            QString path = files->filePath(file);
-            emit singleFileSelected(path);
+        
+        if (selected.size() > 0) { // Selection added
+            if (files && selectionModel && selectionModel->selectedRows().size() == 1) {
+                // Why do we get non-existent path?
+                QString path = "";
+                for (QModelIndex file: selectionModel->selectedRows()) {
+                    path = files->filePath(file);
+                }
+                if (QFile(path).exists()) emit singleFileSelected(path);
+            }
         }
 
         QTreeView::selectionChanged(selected, deselected);

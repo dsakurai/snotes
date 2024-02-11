@@ -28,6 +28,8 @@ public slots:
             markdownEditor->deleteLater();
         }
 
+        if (!QFile(path).exists()) return;
+
         markdownEditor = new SNotesMarkdownEditor(path, this);
         layout()->addWidget(markdownEditor);
     };
