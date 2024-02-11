@@ -9,8 +9,6 @@
 #include <QSortFilterProxyModel>
 #include <set>
 
-bool is_pinned(const std::string& path);
-
 class NotesFolderModel: public QSortFilterProxyModel {// TODO maybe QProxyModel is better?
 
     Q_OBJECT

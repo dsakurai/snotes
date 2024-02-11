@@ -59,11 +59,6 @@ bool is_pinned(const std::string& path) {
     return false;
 }
 
-bool is_pinned(const QModelIndex &index, const NotesFolderModel& model) {
-    QString path = model.filePath(index);
-    return is_pinned(path.toStdString());
-}
-
 bool NotesFolderModel::lessThan(const QModelIndex &source_left, const QModelIndex &source_right) const {
 
     // equal => false
