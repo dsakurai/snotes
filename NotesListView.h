@@ -41,6 +41,7 @@ signals:
     
 public slots:
     void reveal_in_folder();
+    void customContextmenu(const QPoint& point);
     
 protected:
     inline

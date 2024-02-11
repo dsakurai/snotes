@@ -49,14 +49,16 @@ NotesListView::NotesListView(QWidget *parent) : QTreeView(parent) {
     // Context menu
     setContextMenuPolicy(Qt::CustomContextMenu);
     connect(this, &QTreeView::customContextMenuRequested,
-            [this](const QPoint &point) {
-                QMenu contextMenu (tr("Context Menu"), this);
-                
-                auto* reveal = new QAction("Reveal Folder", this);
-                connect(reveal, &QAction::triggered, this, &NotesListView::reveal_in_folder);
-                contextMenu.addAction(reveal);
+            this, &NotesListView::customContextmenu);
 
-                contextMenu.exec(mapToGlobal(point));
-            });
+}
 
+void NotesListView::customContextmenu(const QPoint &point) {
+    QMenu contextMenu (tr("Context Menu"), this);
+
+    auto* reveal = new QAction("Reveal Folder", this);
+    connect(reveal, &QAction::triggered, this, &NotesListView::reveal_in_folder);
+    contextMenu.addAction(reveal);
+
+    contextMenu.exec(mapToGlobal(point));
 }
