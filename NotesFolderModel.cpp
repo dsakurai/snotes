@@ -81,23 +81,23 @@ bool NotesFolderModel::lessThan(const QModelIndex &source_left, const QModelInde
 
     if (source_left.column() != 3) return QSortFilterProxyModel::lessThan(source_left, source_right);
 
-    std::filesystem::file_time_type tl, tr;
+    std::filesystem::file_time_type time_left, time_right;
     try {
         std::filesystem::file_time_type l;
         std::string s = filesystemmodel->filePath(source_left).toStdString();
-        tl = std::filesystem::last_write_time(s);
+        time_left = std::filesystem::last_write_time(s);
     } catch (const std::filesystem::filesystem_error& err) {
         std::cerr << "Error: " << err.what() << '\n';
     }
     try {
         std::filesystem::file_time_type r;
         std::string s = filesystemmodel->filePath(source_right).toStdString();
-        tr = std::filesystem::last_write_time(s);
+        time_right = std::filesystem::last_write_time(s);
     } catch (const std::filesystem::filesystem_error& err) {
         std::cerr << "Error: " << err.what() << '\n';
     }
     
-    return tl < tr; // NOLINT
+    return time_left < time_right;
 }
 
 bool NotesFolderModel::filterFile(int source_row, const QModelIndex &source_parent) const {
