@@ -17,7 +17,9 @@ public:
     explicit 
     NoteViewsArea(QWidget* parent = nullptr): QWidget(parent) {
         // set layout
-        new QHBoxLayout(this);
+        auto* layout = new QHBoxLayout();
+        layout->setContentsMargins(0,0,0,0);
+        setLayout(layout);
     }
     
 public slots:
