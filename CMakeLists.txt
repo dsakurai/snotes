@@ -9,10 +9,17 @@ find_package(Qt6 COMPONENTS
 
 include(FetchContent)
 
+set(patch_file "${CMAKE_CURRENT_SOURCE_DIR}/do_not_change_font_size.patch")
+set(git_apply
+        git apply --reverse --check "${patch_file}" # check if already applied
+        || git apply "${patch_file}" # if not, apply the patch
+)
+
 FetchContent_Declare(
     qmarkdowntext_project
     GIT_REPOSITORY https://github.com/pbek/qmarkdowntextedit.git
     GIT_TAG b1cb6a7d20d2849f31f37822ef24e033c9d7c044
+    PATCH_COMMAND "${git_apply}"
 )
 FetchContent_MakeAvailable(qmarkdowntext_project)
 FetchContent_GetProperties(qmarkdowntext_project) # Expose paths as variables
