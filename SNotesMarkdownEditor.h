@@ -34,6 +34,11 @@ public:
 private:
 };
 
+/**
+ * Handle the IO operation of an editor.
+ * An IO instance's lifetime is managed by the editor.
+ * Do not use QObject's lifetime handling.
+ */
 class IO: public QObject {
     Q_OBJECT
 public:
