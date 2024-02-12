@@ -10,6 +10,7 @@
 #include <QFile>
 #include <QFileInfo>
 #include <QMessageBox>
+#include <QTextEdit>
 #include <QFileSystemWatcher>
 
 class IO;
@@ -21,7 +22,7 @@ class IO;
  * 
  * An instance of this class can be deleted from the IO class, in case of file read error. 
  */
-class SNotesMarkdownEditor: public QMarkdownTextEdit {
+class SNotesMarkdownEditor: public QTextEdit {
     Q_OBJECT
     
 public:
@@ -30,8 +31,11 @@ public:
 
     explicit
     SNotesMarkdownEditor(QString path, QWidget* parent = nullptr):
-            QMarkdownTextEdit(parent)
+            QTextEdit(parent)
     {
+        // This highlights the text in this editor.
+        new MarkdownHighlighter(this->document());
+
         // Do this inside the constructor (not in the initializer list) because IO might call methods of SNotesMarkdownEditor.
         io = std::make_unique<IO>(this, path);
     }
