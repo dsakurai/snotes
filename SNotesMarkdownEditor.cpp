@@ -35,16 +35,6 @@ void IO::save_file_immediately() {
 
     if (!path) return; // No path set.
 
-    QString original; // Original text in the file
-    if (QFile file (*path); file.open(QIODevice::ReadOnly | QIODevice::Text)) {
-        original = file.readAll();
-    } else {
-        // If we can't read from the file, we don't know if the content in the editor matches with the actual file contents we failed to read.
-        // We therefore cancel the write and quit.
-        /* Display warning */ QMessageBox::critical(nullptr, "Reading Fail", "Reading from the file failed. Check the file permissions.");
-        return;
-    }
-
     // The text in the editor
     const QString text = editor->document()->toPlainText(); // Don't use toRawText(). It will use the wrong line separator (maybe \r, I don't know which).
     
@@ -53,6 +43,16 @@ void IO::save_file_immediately() {
     // Write the file in a new thread.
     auto _ = QtConcurrent::run(
         [=]() {
+            QString original; // Original text in the file
+            if (QFile file (file_path); file.open(QIODevice::ReadOnly | QIODevice::Text)) {
+                original = file.readAll();
+            } else {
+                // If we can't read from the file, we don't know if the content in the editor matches with the actual file contents we failed to read.
+                // We therefore cancel the write and quit.
+                /* Display warning */ QMessageBox::critical(nullptr, "Reading Fail", "Reading from the file failed. Check the file permissions.");
+                return;
+            }
+
             if (text == original) return; // no point writing the same text
 
             // Write the content to file
