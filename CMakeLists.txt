@@ -60,6 +60,7 @@ add_executable(simplenotes
         NotesListView.cpp
 
         resources/icons/icon.icns
+        NoteViewsArea.cpp
 )
 
 set_target_properties(simplenotes PROPERTIES CXX_SCAN_FOR_MODULES OFF)

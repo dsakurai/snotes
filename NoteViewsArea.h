@@ -8,36 +8,80 @@
 #include "SNotesMarkdownEditor.h"
 
 #include <QWidget>
-#include <QHBoxLayout>
+#include <QVBoxLayout>
+#include <QLineEdit>
+
+class NoteViewsArea;
+
+class FindLineEdit: public QLineEdit {
+Q_OBJECT
+public:
+    using QLineEdit::QLineEdit;
+protected:
+    void keyPressEvent(QKeyEvent *event) override {
+        if (event->key() == Qt::Key_Escape)
+                emit escapePressed();
+        else
+            QLineEdit::keyPressEvent(event);
+    }
+
+signals:
+    void escapePressed();
+};
+
+class FindBox: public QWidget {
+Q_OBJECT
+public:
+    FindBox(NoteViewsArea* parent);
+    
+    FindLineEdit* findLineEdit() {return findLineEdit_;}
+    QTextEdit* editor();
+    
+private:
+    FindLineEdit* findLineEdit_ = new FindLineEdit(this);
+};
 
 class NoteViewsArea: public QWidget {
 Q_OBJECT
 
 public:
-    explicit 
-    NoteViewsArea(QWidget* parent = nullptr): QWidget(parent) {
+    explicit
+    NoteViewsArea(QWidget* parent = nullptr):
+            QWidget(parent)
+    {
         // set layout
-        auto* layout = new QHBoxLayout();
+        auto* layout = new QVBoxLayout(this);
         layout->setContentsMargins(0,0,0,0);
         setLayout(layout);
+
+        findBox = new FindBox(this);
+        layout->addWidget(findBox);
+        findBox->hide();
     }
+    
+    QTextEdit* markdownEditor() {return markdownEditor_;}
     
 public slots:
     void open_file(const QString path) {
     
-        if (markdownEditor) {
-            layout()->removeWidget(markdownEditor);
-            markdownEditor->deleteLater();
+        if (markdownEditor_) {
+            layout()->removeWidget(markdownEditor_);
+            markdownEditor_->deleteLater();
         }
 
         if (!QFile(path).exists()) return;
 
-        markdownEditor = new SNotesMarkdownEditor(path, this);
-        layout()->addWidget(markdownEditor);
+        markdownEditor_ = new SNotesMarkdownEditor(path, this);
+        layout()->addWidget(markdownEditor_);
+        
+        // Hide the find box when closing the file.
+        connect(markdownEditor_, &QTextEdit::destroyed,
+                findBox, &QLineEdit::hide);
     };
 
 private:
-    QPointer<SNotesMarkdownEditor> markdownEditor = nullptr;
+    QPointer<SNotesMarkdownEditor> markdownEditor_ = nullptr;
+    FindBox* findBox = nullptr;
 };
 
 #endif //SIMPLEMARKDOWN_NOTEVIEWSAREA_H
