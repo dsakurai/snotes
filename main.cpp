@@ -10,7 +10,6 @@
 #include <QSortFilterProxyModel>
 #include <QStandardPaths>
 #include <QTimer>
-#include <QShortcut>
 
 
 void open_main_window() {
