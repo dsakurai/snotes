@@ -4,6 +4,8 @@
 
 #include "SNotesMarkdownEditor.h"
 
+#include <QtConcurrent/QtConcurrent>
+
 void IO::readAllNow() {
     is_load_requested = false;
 
@@ -45,10 +47,18 @@ void IO::save_file_immediately() {
 
     // The text in the editor
     const QString text = editor->document()->toPlainText(); // Don't use toRawText(). It will use the wrong line separator (maybe \r, I don't know which).
-    if (text == original) return; // no point writing the same text
+    
+    QString file_path = *path;
 
-    // Write the content to file
-    if (QFile file (*path); file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate )) {
-        file.write(text.toUtf8());
-    } else /* Display warning */ QMessageBox::critical(nullptr, "Writing Fail", "Writing to the file failed. Check the file permissions.");
+    // Write the file in a new thread.
+    auto _ = QtConcurrent::run(
+        [=]() {
+            if (text == original) return; // no point writing the same text
+
+            // Write the content to file
+            if (QFile file (file_path); file.open(QIODevice::WriteOnly | QIODevice::Text | QIODevice::Truncate )) {
+                file.write(text.toUtf8());
+            } else /* Display warning */ QMessageBox::critical(nullptr, "Writing Fail", "Writing to the file failed. Check the file permissions.");
+        }
+    );
 }
