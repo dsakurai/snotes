@@ -14,6 +14,13 @@
 
 class IO;
 
+/**
+ * This editor is tasked with editing only one file. It will not be re-used for editing a different file.
+ * This design is chosen to make sure that this editor will not write the content of one file to another, when failing 
+ * to switch the state properly.
+ * 
+ * An instance of this class can be deleted from the IO class, in case of file read error. 
+ */
 class SNotesMarkdownEditor: public QMarkdownTextEdit {
     Q_OBJECT
     
