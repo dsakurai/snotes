@@ -45,7 +45,11 @@ bool is_pinned(const std::string& path) {
         ryml::Tree tree = ryml::parse_in_place(ryml::substr(
                 yaml_header.data(), yaml_header.size()));
 
-        auto pinned = tree["pinned"];
+        if (tree.empty()) return false;
+
+        auto rootref = tree.rootref();
+        if (!rootref.is_map()) return false;
+        auto pinned = rootref["pinned"];
         if (pinned.valid() && pinned.has_val() ) {
             auto val = pinned.val();
             if ((val == "true") || (val == "yes")) {
