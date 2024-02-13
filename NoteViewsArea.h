@@ -10,6 +10,8 @@
 #include <QWidget>
 #include <QVBoxLayout>
 #include <QLineEdit>
+#include <QPropertyAnimation>
+#include <QShortcut>
 
 class NoteViewsArea;
 
@@ -77,6 +79,32 @@ public slots:
         // Hide the find box when closing the file.
         connect(markdownEditor_, &QTextEdit::destroyed,
                 findBox, &QLineEdit::hide);
+
+        // Zoom in / out (magnify font)
+        new QShortcut(QKeySequence("Ctrl+="), this,
+            [this]() {
+                QTextDocument* doc = markdownEditor_->document();
+                if (!doc) return;
+                
+                QFont font = doc->defaultFont();
+                font.setPointSize(
+                        font.pointSize() +1
+                );
+                doc->setDefaultFont(font);
+            }
+        );
+        new QShortcut(QKeySequence::ZoomOut, this,
+                      [this]() {
+                          QTextDocument* doc = markdownEditor_->document();
+                          if (!doc) return;
+
+                          QFont font = doc->defaultFont();
+                          font.setPointSize(
+                                  font.pointSize() -1
+                          );
+                          doc->setDefaultFont(font);
+                      }
+        );
     };
 
 private:
