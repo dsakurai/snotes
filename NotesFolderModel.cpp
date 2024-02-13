@@ -40,6 +40,7 @@ bool is_pinned(const std::string& path) {
         }
 
         if(!found) return false;
+        if (yaml_header.empty()) return false;
 
         ryml::Tree tree = ryml::parse_in_place(ryml::substr(
                 yaml_header.data(), yaml_header.size()));
