@@ -35,6 +35,9 @@ public:
     {
         // This highlights the text in this editor.
         new MarkdownHighlighter(this->document());
+        
+        // Rich text not allowed
+        this->setAcceptRichText(false);
 
         // Do this inside the constructor (not in the initializer list) because IO might call methods of SNotesMarkdownEditor.
         io = std::make_unique<IO>(this, path);
