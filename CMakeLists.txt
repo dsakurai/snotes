@@ -76,6 +76,11 @@ set_target_properties(simplenotes PROPERTIES
     AUTOUIC ON
 )
 
+set_target_properties(simplenotes PROPERTIES
+        MACOSX_BUNDLE_BUNDLE_NAME "SimpleNotes"
+        MACOSX_BUNDLE_GUI_IDENTIFIER "com.snoteteam.SNote"
+)
+
 target_include_directories(simplenotes
         PRIVATE
         "${qmarkdowntext_project_SOURCE_DIR}" # The header of the QWidget for markdown. The problem is that it's in the build directory...
