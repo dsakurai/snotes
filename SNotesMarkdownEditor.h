@@ -6,12 +6,14 @@
 #define SIMPLEMARKDOWN_SNOTESMARKDOWNEDITOR_H
 
 #include <qmarkdowntextedit.h>
+
 #include <QDateTime>
 #include <QFile>
 #include <QFileInfo>
 #include <QMessageBox>
 #include <QTextEdit>
 #include <QFileSystemWatcher>
+
 
 class IO;
 
@@ -43,7 +45,8 @@ public:
         io = std::make_unique<IO>(this, path);
     }
     
-public:
+protected:
+    void keyPressEvent(QKeyEvent* event) override;
     
 private:
 };
@@ -116,6 +119,8 @@ public:
 
     void request_load() {is_load_requested = true;}
     void request_save() {is_save_requested = true;}
+    
+    auto get_path() {return path;}
 
     ~IO() {
         if (path && QFile(*path).exists()) save_file_immediately();

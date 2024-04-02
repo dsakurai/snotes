@@ -4,6 +4,15 @@
 
 #include "SNotesMarkdownEditor.h"
 
+#include <QApplication>
+#include <QClipboard>
+#include <QDir>
+#include <QFileInfo>
+#include <QMimeData>
+#include <QShortcut>
+#include <QUuid>
+#include <Settings.h>
+
 #include <QtConcurrent/QtConcurrent>
 
 void IO::readAllNow() {
@@ -61,4 +70,37 @@ void IO::save_file_immediately() {
             } else /* Display warning */ QMessageBox::critical(nullptr, "Writing Fail", "Writing to the file failed. Check the file permissions.");
         }
     );
+}
+
+void SNotesMarkdownEditor::keyPressEvent(QKeyEvent *event) {
+
+    if (event->type() == QEvent::KeyPress) {
+        const QMimeData *mimeData = QApplication::clipboard()->mimeData();
+        QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+
+        if (keyEvent->matches(QKeySequence::Paste)) {
+            if (mimeData->hasImage()) {
+            
+                const std::optional<QString> md_file_path = io->get_path();
+                if (md_file_path) {
+                    const QString parentFolderPath = QFileInfo(*md_file_path).absoluteDir().absolutePath();
+
+                    const QDateTime currentDateTime = QDateTime::currentDateTime();
+                    const QString str = currentDateTime.toString("yyyy-MM-dd-hh-mm-ss"); // ISO-like format
+
+                    auto uuid = QUuid::createUuid().toString();
+                    uuid = uuid.remove("{").remove("}");
+                    const QImage img = qvariant_cast<QImage>(mimeData->imageData());
+                    
+                    const auto imagePath = "attachments/Clipboard-" + str + uuid + ".png";
+                    img.save(parentFolderPath+ "/" + imagePath);
+
+                    insertPlainText(QString("![](%1)\n").arg(imagePath));
+
+                    return;
+                }
+            }
+        }
+    }
+    QTextEdit::keyPressEvent(event);
 }
